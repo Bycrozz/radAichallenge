@@ -1,0 +1,36 @@
+<Project>
+
+  <!-- Make sure $(SolutionDir) is defined (in case it's empty) -->
+  <PropertyGroup>
+    <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MSBuildThisFileDirectory)</SolutionDir>
+  </PropertyGroup>
+
+  <Target Name="PublishAndOpenReports" AfterTargets="VSTest">
+    <!-- Create the folders if they don't exist -->
+    <MakeDir Directories="$(SolutionDir)Reports\TestResults" />
+    <MakeDir Directories="$(SolutionDir)Reports\Coverage" />
+    <MakeDir Directories="$(SolutionDir)Reports\Coverage\Html" />
+
+    <!-- 1) Convert cobertura XML into an HTML coverage dashboard -->
+    <Exec
+      Command="reportgenerator -reports:&quot;$(SolutionDir)Reports/Coverage/coverage.xml&quot; -targetdir:&quot;$(SolutionDir)Reports\Coverage\Html&quot; -reporttypes:Html"
+      IgnoreExitCode="false" />
+
+    <!-- 2) Open the HTML test report -->
+    <Exec
+      Condition=" '$(OS)' == 'Windows_NT' "
+      Command='cmd /c start "" "$(SolutionDir)Reports\TestResults\TestResults.html"' />
+    <Exec
+      Condition=" '$(OS)' != 'Windows_NT' "
+      Command='bash -c "xdg-open \"$(SolutionDir)/Reports/TestResults/TestResults.html\" || open \"$(SolutionDir)/Reports/TestResults/TestResults.html\""' />
+
+    <!-- 3) Open the HTML coverage report -->
+    <Exec
+      Condition=" '$(OS)' == 'Windows_NT' "
+      Command='cmd /c start "" "$(SolutionDir)Reports\Coverage\Html\index.html"' />
+    <Exec
+      Condition=" '$(OS)' != 'Windows_NT' "
+      Command='bash -c "xdg-open \"$(SolutionDir)/Reports/Coverage/Html/index.html\" || open \"$(SolutionDir)/Reports/Coverage/Html/index.html\""' />
+  </Target>
+
+</Project>

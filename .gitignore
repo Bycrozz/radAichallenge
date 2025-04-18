@@ -2,6 +2,6 @@
 # .NET Core build folders
 bin/
 obj/
-
+Reports/
 # Sqlite Databases
 *.db

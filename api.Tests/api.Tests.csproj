@@ -3,15 +3,25 @@
     <TargetFramework>net8.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+
+    <!-- auto‑collect coverage into Reports/Coverage/coverage.xml -->
+    <CollectCoverage>true</CollectCoverage>
+    <CoverletOutputFormat>cobertura</CoverletOutputFormat>
+    <CoverletOutput>$(SolutionDir)Reports/Coverage/coverage.xml</CoverletOutput>
+
+    <!-- built‑in HTML logger: drop TestResults.html under Reports/TestResults -->
+    <VSTestLogger>html;LogFileName=TestResults.html</VSTestLogger>
+    <ResultsDirectory>$(SolutionDir)Reports/TestResults</ResultsDirectory>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="8.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.4" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
     <PackageReference Include="NUnit" Version="3.14.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Include="coverlet.msbuild" Version="3.2.0" />
   </ItemGroup>
 
   <ItemGroup>

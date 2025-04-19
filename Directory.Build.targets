@@ -1,36 +1,30 @@
-<Project>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <!-- Make sure $(SolutionDir) is defined (in case it's empty) -->
   <PropertyGroup>
-    <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MSBuildThisFileDirectory)</SolutionDir>
+    <SolutionDir Condition="'$(SolutionDir)' == ''">$(MSBuildThisFileDirectory)</SolutionDir>
   </PropertyGroup>
 
-  <Target Name="PublishAndOpenReports" AfterTargets="VSTest">
-    <!-- Create the folders if they don't exist -->
+  <Target Name="CustomDotnetTest" DependsOnTargets="Build" AfterTargets="Build">
+    <PropertyGroup>
+      <_IsEntryPoint Condition="'$(MSBuildProjectName)' == 'api.Tests'">true</_IsEntryPoint>
+    </PropertyGroup>
+
+    <Exec Condition="'$(_IsEntryPoint)' == 'true'"
+      Command='dotnet test "$(MSBuildProjectFullPath)" --no-build --logger "html;LogFileName=TestResults.html" --results-directory "$(SolutionDir)Reports\TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$(SolutionDir)Reports\Coverage\coverage.xml' />
+  </Target>
+
+  <Target Name="PostTestReporting" AfterTargets="CustomDotnetTest">
     <MakeDir Directories="$(SolutionDir)Reports\TestResults" />
-    <MakeDir Directories="$(SolutionDir)Reports\Coverage" />
     <MakeDir Directories="$(SolutionDir)Reports\Coverage\Html" />
 
-    <!-- 1) Convert cobertura XML into an HTML coverage dashboard -->
-    <Exec
-      Command="reportgenerator -reports:&quot;$(SolutionDir)Reports/Coverage/coverage.xml&quot; -targetdir:&quot;$(SolutionDir)Reports\Coverage\Html&quot; -reporttypes:Html"
-      IgnoreExitCode="false" />
+    <Exec Condition="Exists('$(SolutionDir)Reports\Coverage\coverage.xml')"
+          Command='reportgenerator -reports:"$(SolutionDir)Reports\Coverage\coverage.xml" -targetdir:"$(SolutionDir)Reports\Coverage\Html" -reporttypes:Html' />
 
-    <!-- 2) Open the HTML test report -->
-    <Exec
-      Condition=" '$(OS)' == 'Windows_NT' "
-      Command='cmd /c start "" "$(SolutionDir)Reports\TestResults\TestResults.html"' />
-    <Exec
-      Condition=" '$(OS)' != 'Windows_NT' "
-      Command='bash -c "xdg-open \"$(SolutionDir)/Reports/TestResults/TestResults.html\" || open \"$(SolutionDir)/Reports/TestResults/TestResults.html\""' />
+    <Exec Condition="Exists('$(SolutionDir)Reports\TestResults\TestResults.html')"
+          Command='cmd /c start "" "$(SolutionDir)Reports\TestResults\TestResults.html"' />
 
-    <!-- 3) Open the HTML coverage report -->
-    <Exec
-      Condition=" '$(OS)' == 'Windows_NT' "
-      Command='cmd /c start "" "$(SolutionDir)Reports\Coverage\Html\index.html"' />
-    <Exec
-      Condition=" '$(OS)' != 'Windows_NT' "
-      Command='bash -c "xdg-open \"$(SolutionDir)/Reports/Coverage/Html/index.html\" || open \"$(SolutionDir)/Reports/Coverage/Html/index.html\""' />
+    <Exec Condition="Exists('$(SolutionDir)Reports\Coverage\Html\index.html')"
+          Command='cmd /c start "" "$(SolutionDir)Reports\Coverage\Html\index.html"' />
   </Target>
 
 </Project>

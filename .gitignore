@@ -8,3 +8,4 @@ Reports/
 # Sqlite Databases
 *.db
 test-results/
+PlaywrightTests/playwright-report/*

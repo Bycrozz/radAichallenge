@@ -37,7 +37,7 @@ test.describe('GET /nearestFoodTrucks', () => {
   });
 
   test('should return 200 and an empty array for far west coordinates (Pacific Ocean)', async ({ request }) => {
-    const res = await request.get(`${base}?latitude=0&longitude=-150`);
+    const res = await request.get(`${base}/nearestFoodTrucks?latitude=0&longitude=-150`);
     expect(res.status()).toBe(200);
 
     const json = await res.json();
@@ -46,7 +46,7 @@ test.describe('GET /nearestFoodTrucks', () => {
   });
 
   test('should return 200 and an empty array for far north coordinates (Alaska)', async ({ request }) => {
-    const res = await request.get(`${base}?latitude=65&longitude=-150`);
+    const res = await request.get(`${base}/nearestFoodTrucks?latitude=65&longitude=-150`);
     expect(res.status()).toBe(200);
 
     const json = await res.json();
@@ -55,7 +55,7 @@ test.describe('GET /nearestFoodTrucks', () => {
   });
 
   test('should return 200 and an empty array for east-coast coordinates (New York)', async ({ request }) => {
-    const res = await request.get(`${base}?latitude=40.7128&longitude=-74.006`);
+    const res = await request.get(`${base}/nearestFoodTrucks?latitude=40.7128&longitude=-74.006`);
     expect(res.status()).toBe(200);
 
     const json = await res.json();

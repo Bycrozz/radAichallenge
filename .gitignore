@@ -3,5 +3,8 @@
 bin/
 obj/
 Reports/
+*.js
+*/node_modules/*
 # Sqlite Databases
 *.db
+test-results/

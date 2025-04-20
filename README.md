@@ -7,19 +7,18 @@ This project is set up to:
 - Open both reports automatically.
 
 ##### 🔧 Requirements
-
-- Install [.NET SDK 8.x](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-- ReportGenerator (install once via terminal):
+- Clone this repository and run the application in the folder radAichallenge [using the original repo instructions](https://github.com/radaisystems/food-trucks-challenge)
+- Install [.NET SDK 8.x](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) (If not installed)
+- install ReportGenerator (install once via terminal):
 
 ```bash
 dotnet tool install --global dotnet-reportgenerator-globaltool
 ```
 
 ##### 🚀 How to Run
-In a folder of your choice, open the command line and use the following commands:
+In the cloned repository folder:
 
 ```bash
-git clone https://github.com/lucaspin92/radAichallenge.git
 cd radAichallenge
 dotnet restore
 dotnet test

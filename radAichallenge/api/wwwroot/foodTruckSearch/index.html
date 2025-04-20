@@ -1,0 +1,399 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Food Truck Search</title>
+  <style>
+    body {
+      background-color: #f1f9f6;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 50px auto;
+      background: #fff;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    .version-label {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 14px;
+      color: #777;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .form-group {
+      max-width: 400px;
+      margin: 0 auto 20px auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    select,
+    input[type="text"],
+    input[type="number"],
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    select {
+      text-align: center;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .button-group button {
+      flex: 1;
+      font-size: 16px;
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+
+    .button-group button:hover {
+      background-color: #218838;
+    }
+
+    #clearBtn {
+      background-color: #dc3545;
+    }
+
+    #clearBtn:hover {
+      background-color: #c82333;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px;
+      table-layout: fixed;
+    }
+
+    th, td {
+      padding: 12px;
+      border: 1px solid #ccc;
+      text-align: left;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    th:nth-child(1), td:nth-child(1) { width: 40%; }
+    th:nth-child(2), td:nth-child(2) { width: 60%; }
+
+    th {
+      background-color: #e8f4f1;
+    }
+
+    .error {
+      color: #721c24;
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      padding: 16px 40px 16px 16px;
+      margin: 0 auto 20px auto;
+      max-width: 400px;
+      border-radius: 6px;
+      position: relative;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+
+    .error button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      font-weight: bold;
+      color: #721c24;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .pagination-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: nowrap;
+      gap: 10px;
+      margin-top: 25px;
+      overflow-x: auto;
+      padding: 10px 0;
+    }
+
+    .pagination-container button {
+      padding: 6px 12px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      background-color: #f1f1f1;
+      cursor: pointer;
+      min-width: 40px;
+    }
+
+    .pagination-container button.active {
+      background-color: #007bff;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    .pagination-container button:hover {
+      background-color: #ddd;
+    }
+
+  </style>
+</head>
+<body>
+<div class="container">
+  <span class="version-label">v15</span>
+  <h1>🍴 Food Truck Search</h1>
+
+  <div id="errorBox" class="error" style="display:none;">
+    <span id="errorMsg"></span>
+    <button onclick="hideError()">×</button>
+  </div>
+
+  <div class="form-group">
+    <label for="searchBy">Search By:</label>
+    <select id="searchBy" onchange="handleSearchByChange()">
+      <option value="name">Name</option>
+      <option value="street">Street</option>
+      <option value="nearest">Nearest</option>
+    </select>
+
+    <input id="searchInput" type="text" placeholder="Type food truck name" list="suggestions"/>
+    <datalist id="suggestions"></datalist>
+
+    <input id="latInput" type="number" placeholder="Latitude" style="display:none;" step="any"/>
+    <input id="lngInput" type="number" placeholder="Longitude" style="display:none;" step="any"/>
+
+    <div class="button-group">
+      <button onclick="search()">Search</button>
+      <button id="clearBtn" onclick="clearSearch()">Clear</button>
+    </div>
+  </div>
+
+  <table id="resultsTable" style="display:none;">
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Address</th>
+    </tr>
+    </thead>
+    <tbody id="resultsBody"></tbody>
+  </table>
+
+  <div id="paginationContainer" class="pagination-container"></div>
+</div>
+
+<script>
+  const baseUrl = 'http://localhost:5000/api/MobileFoodTrucks';
+  const resultsPerPage = 15;
+
+  const searchBy = document.getElementById('searchBy');
+  const searchInput = document.getElementById('searchInput');
+  const latInput = document.getElementById('latInput');
+  const lngInput = document.getElementById('lngInput');
+  const resultsTable = document.getElementById('resultsTable');
+  const resultsBody = document.getElementById('resultsBody');
+  const errorBox = document.getElementById('errorBox');
+  const errorMsg = document.getElementById('errorMsg');
+  const suggestions = document.getElementById('suggestions');
+  const paginationContainer = document.getElementById('paginationContainer');
+
+  let allResults = [];
+  let currentPage = 1;
+  let autocompleteTimeout;
+
+  function handleSearchByChange() {
+    const mode = searchBy.value;
+    searchInput.style.display = mode !== 'nearest' ? 'block' : 'none';
+    latInput.style.display = lngInput.style.display = mode === 'nearest' ? 'block' : 'none';
+    searchInput.placeholder = mode === 'name' ? 'Type food truck name' : 'Type address';
+    resultsTable.style.display = 'none';
+    resultsBody.innerHTML = '';
+    paginationContainer.innerHTML = '';
+    suggestions.innerHTML = '';
+  }
+
+  function showError(msg) {
+    errorMsg.innerText = msg;
+    errorBox.style.display = 'block';
+    resultsTable.style.display = 'none';
+    resultsBody.innerHTML = '';
+    paginationContainer.innerHTML = '';
+  }
+
+  function hideError() {
+    errorBox.style.display = 'none';
+  }
+
+  function clearSearch() {
+    searchInput.value = '';
+    latInput.value = '';
+    lngInput.value = '';
+    resultsTable.style.display = 'none';
+    hideError();
+    resultsBody.innerHTML = '';
+    paginationContainer.innerHTML = '';
+    suggestions.innerHTML = '';
+  }
+
+  async function search() {
+    hideError();
+    const mode = searchBy.value;
+    let url = '';
+
+    if (mode === 'name') {
+      if (!searchInput.value.trim()) return showError('Please enter a name.');
+      url = `${baseUrl}/searchByName?name=${encodeURIComponent(searchInput.value.trim())}`;
+    } else if (mode === 'street') {
+      if (!searchInput.value.trim()) return showError('Please enter a street address.');
+      url = `${baseUrl}/searchByStreet?street=${encodeURIComponent(searchInput.value.trim())}`;
+    } else if (mode === 'nearest') {
+      const lat = parseFloat(latInput.value);
+      const lng = parseFloat(lngInput.value);
+      if (isNaN(lat) || isNaN(lng)) return showError('Please enter valid numbers for latitude and longitude.');
+      if (lat === 0 || lng === 0) return showError('Latitude and longitude cannot be 0.');
+      if (lat < 37.6 || lat > 37.9 || lng < -123.0 || lng > -122.0) return showError('Coordinates must be within San Francisco.');
+
+      url = `${baseUrl}/nearestFoodTrucks?latitude=${lat}&longitude=${lng}`;
+    }
+
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      allResults = await res.json();
+      if (allResults.length === 0) {
+        showError('No results found.');
+        return;
+      }
+      currentPage = 1;
+      renderPage();
+    } catch (err) {
+      showError('Failed to fetch results.');
+      console.error(err);
+    }
+  }
+
+  function renderPage() {
+    const start = (currentPage - 1) * resultsPerPage;
+    const end = start + resultsPerPage;
+    const pageResults = allResults.slice(start, end);
+
+    resultsBody.innerHTML = '';
+    pageResults.forEach(item => {
+      const row = document.createElement('tr');
+      row.innerHTML = `<td>${item.applicant}</td><td>${item.address}</td>`;
+      resultsBody.appendChild(row);
+    });
+    resultsTable.style.display = 'table';
+    renderPagination();
+  }
+
+  function renderPagination() {
+    const totalPages = Math.ceil(allResults.length / resultsPerPage);
+    paginationContainer.innerHTML = '';
+
+    function createButton(label, page, isActive = false, disabled = false) {
+      const btn = document.createElement('button');
+      btn.textContent = label;
+      if (isActive) btn.classList.add('active');
+      if (disabled) btn.disabled = true;
+      btn.onclick = () => {
+        currentPage = page;
+        renderPage();
+      };
+      paginationContainer.appendChild(btn);
+    }
+
+    if (currentPage > 1) {
+      createButton('First', 1);
+      createButton('Prev', currentPage - 1);
+    }
+
+    for (let i = 1; i <= totalPages; i++) {
+      if (i === 1 || i === totalPages || Math.abs(i - currentPage) <= 2) {
+        createButton(i, i, i === currentPage);
+      } else if (
+        (i === 2 && currentPage > 4) ||
+        (i === totalPages - 1 && currentPage < totalPages - 3)
+      ) {
+        const dots = document.createElement('span');
+        dots.textContent = '...';
+        dots.style.padding = '6px';
+        paginationContainer.appendChild(dots);
+      }
+    }
+
+    if (currentPage < totalPages) {
+      createButton('Next', currentPage + 1);
+      createButton('Last', totalPages);
+    }
+  }
+
+  searchInput.addEventListener('input', (e) => {
+    const mode = searchBy.value;
+    const value = e.target.value;
+
+    if (value.length < 3 || mode === 'nearest') return;
+
+    clearTimeout(autocompleteTimeout);
+
+    autocompleteTimeout = setTimeout(async () => {
+      try {
+        const endpoint = mode === 'name' ? 'searchByName' : 'searchByStreet';
+        const res = await fetch(`${baseUrl}/${endpoint}?${mode}=${encodeURIComponent(value)}`);
+        const data = await res.json();
+        const unique = [...new Set(data.map(item => mode === 'name' ? item.applicant : item.address))];
+        suggestions.innerHTML = '';
+        unique.slice(0, 10).forEach(item => {
+          const option = document.createElement('option');
+          option.value = item;
+          suggestions.appendChild(option);
+        });
+      } catch (err) {
+        console.error('Autocomplete failed:', err);
+      }
+    }, 200);
+  });
+
+  document.addEventListener('click', (e) => {
+    if (e.target !== searchInput) {
+      suggestions.innerHTML = '';
+    }
+  });
+
+  handleSearchByChange();
+</script>
+</body>
+</html>

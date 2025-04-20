@@ -23,6 +23,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FoodTrucksApi v1"));
 }
 
+app.UseStaticFiles(); 
+
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -31,11 +33,16 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
+
+app.UseRouting();
+app.MapGet("/foodTruckSearch", context =>
+{
+    context.Response.Redirect("/foodTruckSearch/index.html");
+    return Task.CompletedTask;
+});
 
 app.MapControllers();
 
-app.UseRouting();
-
 app.Run();
+

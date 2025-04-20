@@ -10,6 +10,7 @@
     "@playwright/test": "^1.52.0"
   },
   "scripts": {
-    "test": "npx playwright test --reporter=html && npx playwright show-report"
+    "test": "npx playwright test --reporter=html && npx playwright show-report",
+    "report:e2e": "npx playwright test tests/e2e --reporter=html && npx playwright show-report"
   }
 }

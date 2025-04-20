@@ -10,7 +10,9 @@
     "@playwright/test": "^1.52.0"
   },
   "scripts": {
-    "test": "npx playwright test --reporter=html && npx playwright show-report",
-    "report:e2e": "npx playwright test tests/e2e --reporter=html && npx playwright show-report"
+    "test:e2e": "npx playwright test tests/e2e --reporter=html --project=chromium && npx playwright show-report",
+    "test:e2e:tag": "npx playwright test tests/e2e --project=chromium --reporter=html --grep",
+    "report:e2e:tag": "npx playwright test tests/e2e --reporter=html --grep",
+    "test:api": "npx playwright test tests/api --reporter=html && npx playwright show-report"
   }
 }

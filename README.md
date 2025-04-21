@@ -29,7 +29,6 @@ This project is set up to:
 
 - Run unit tests
 - Generate **HTML test** and **coverage reports**
-- Open both reports automatically.
 
 ##### 🔧 Requirements
 - Clone this repository and run the application in the folder `radAichallenge` [using the original repo instructions](https://github.com/radaisystems/food-trucks-challenge)

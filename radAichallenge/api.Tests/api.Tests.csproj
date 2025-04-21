@@ -4,13 +4,9 @@
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
 
-    <!-- auto-collect coverage into Reports/Coverage/coverage.xml -->
     <CollectCoverage>true</CollectCoverage>
     <CoverletOutputFormat>cobertura</CoverletOutputFormat>
     <CoverletOutput>$(SolutionDir)Reports/Coverage/coverage.xml</CoverletOutput>
-
-    <!-- built-in HTML logger: drop TestResults.html under Reports/TestResults -->
-    <VSTestLogger>html;LogFileName=TestResults.html</VSTestLogger>
     <ResultsDirectory>$(SolutionDir)Reports/TestResults</ResultsDirectory>
   </PropertyGroup>
 

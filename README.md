@@ -31,13 +31,13 @@ This project is set up to:
 - Generate **HTML test** and **coverage reports**
 
 ##### 🔧 Requirements
-- Clone this repository and run the application in the folder `radAichallenge` [using the original repo instructions](https://github.com/radaisystems/food-trucks-challenge)
 - Install [.NET SDK 8.x](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) (If not installed)
 - Install ReportGenerator (install once via terminal):
 
 ```
 dotnet tool install --global dotnet-reportgenerator-globaltool
 ```
+- Clone this repository and run the application in the folder `radAichallenge` [using the original repo instructions](https://github.com/radaisystems/food-trucks-challenge)
 
 ##### 🚀 How to Run
 In the cloned repository folder:
@@ -63,23 +63,23 @@ dotnet test
 ##### ✅ 1. Install Prerequisites
 
 - Install [Node.js and npm](https://nodejs.org)
-- Make sure the application is running on `http://localhost:5000`
+- Make sure the api is running on `http://localhost:5000/api` and the application on `http://localhost:5000/foodTruckSearch/`
 
 ##### 📦 2. Install Dependencies
 
-From the root of the `PlaywrightTests` folder:
+From the root of the repository folder:
 
 ```
 cd PlaywrightTests
 npm install
-npx playwright install
 ```
+<p>These commands will install the dependencies from `package.json`
 
 ---
 
 ### 🧪 Playwright E2E Tests -  Setup & Execution
 
-> Minimal guide to install dependencies and run existing Playwright UI tests with tags, headed mode, browser selection, and HTML reports.
+> Minimal guide to install dependencies and run existing Playwright UI tests with tags, headed mode, browser selection, and HTML reports. The commands must be run inside the PlayWrightTests folder.
 
 ##### 🏃 Run All E2E Tests
 

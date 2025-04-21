@@ -21,6 +21,7 @@ In the cloned repository folder:
 ```bash
 cd radAichallenge
 dotnet restore
+dotnet build
 dotnet test
 ```
 

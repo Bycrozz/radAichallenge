@@ -1,3 +1,14 @@
+### ⚠️ Important
+- Always use powershell as admin
+- If at any point of the process you get an error message containing
+```
+running scripts is disabled on this system
+```
+You need to run this command in you powershell to enable scripts running:
+```
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+```
+select Y or A when prompted.
 ### 🧪 Unit Tests - Setup and Execution
 
 This project is set up to:
@@ -7,18 +18,18 @@ This project is set up to:
 - Open both reports automatically.
 
 ##### 🔧 Requirements
-- Clone this repository and run the application in the folder radAichallenge [using the original repo instructions](https://github.com/radaisystems/food-trucks-challenge)
+- Clone this repository and run the application in the folder `radAichallenge` [using the original repo instructions](https://github.com/radaisystems/food-trucks-challenge)
 - Install [.NET SDK 8.x](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) (If not installed)
-- install ReportGenerator (install once via terminal):
+- Install ReportGenerator (install once via terminal):
 
-```bash
+```
 dotnet tool install --global dotnet-reportgenerator-globaltool
 ```
 
 ##### 🚀 How to Run
 In the cloned repository folder:
 
-```bash
+```
 cd radAichallenge
 dotnet restore
 dotnet build
@@ -30,96 +41,135 @@ dotnet test
 - HTML test report: `Reports/TestResults/TestResults.html`
 - Coverage dashboard: `Reports/Coverage/Html/index.html`
 
-### 🧪 Playwright E2E Tests -  Setup & Execution
-
-> Minimal guide to install dependencies and run existing Playwright UI tests with tags, headed mode, browser selection, and HTML reports.
-
 ---
+
+### 🎭 Playwright Tests - Common Setup
+
+> This section applies to **both E2E and API** Playwright tests.
 
 ##### ✅ 1. Install Prerequisites
 
-Install Node.js and npm (https://nodejs.org)
-Make sure the application is running on http://localhost:5000/foodTruckSearch
-
----
+- Install [Node.js and npm](https://nodejs.org)
+- Make sure the application is running on `http://localhost:5000`
 
 ##### 📦 2. Install Dependencies
 
-Run this in RadAiTests\PlaywrightTests:
+From the root of the `PlaywrightTests` folder:
 
-```bash
-npm install --save-dev @playwright/test
+```
+cd PlaywrightTests
+npm install
 npx playwright install
 ```
 
 ---
 
-##### 🏃 3. Run All E2E Tests
+### 🧪 Playwright E2E Tests -  Setup & Execution
 
-```bash
+> Minimal guide to install dependencies and run existing Playwright UI tests with tags, headed mode, browser selection, and HTML reports.
+
+##### 🏃 Run All E2E Tests
+
+```
 npm run test:e2e
 ```
 
----
+##### 🏷️ Run Tests by Tags (No HTML report)
 
-##### 🏷️ 4. Run Tests by Tags (No HTML report)
-
-```bash
+```
 npm run test:e2e:tag --grep "@ui"
-With tags (AND)
+```
+
+**With tags (AND):**
+```
 npm run test:e2e:tag --grep "@ui" --grep "@search"
-With tags (OR)
+```
+
+**With tags (OR):**
+```
 npm run test:e2e:tag --grep "@ui|@search"
 ```
 
----
+##### 🧭 Run Tests in Headed Mode (Show browser UI)
 
-##### 🧭 5. Run Tests in Headed Mode (Show browser UI)
-
-```bash
+```
 npx playwright test tests/e2e --headed
-
-you can combine with tags adding --grep "@tag" (should be in the end)
-and select the browser adding --project=chromium
 ```
 
----
+**Combine with tag and browser:**
+```
+npx playwright test tests/e2e --headed --project=chromium --grep "@tag"
+```
 
-##### 🌐 6. Run Tests in a Specific Browser
+##### 🌐 Run Tests in a Specific Browser
 
 Available browsers: `chromium`, `firefox`, `webkit`
 
-```bash
+```
 npx playwright test tests/e2e --project=chromium
 npx playwright test tests/e2e --project=firefox
 npx playwright test tests/e2e --project=webkit
 ```
 
----
-
-##### 📊 7. Generate and Open HTML Report
+##### 📊 Generate and Open HTML Report
 
 Run all tests and open the HTML report:
 
-```bash
+```
 npm run test:e2e
 ```
-<p> You can automatically generate and open the report for the other 
-commands by adding the following command at the end:
 
-```bash
+To auto-open the report for any run (add at the end of npx playwright test commands):
+```
 && npx playwright show-report
 ```
----
 
-##### 🧪 8. Run with Playwright Test Runner UI
+##### 🧪 Run with Playwright Test Runner UI
 
-```bash
+```
 npx playwright test tests/e2e --ui
 ```
 
-##### ▶️ 9. Example with tags, browser, UI and autoreport
+##### ▶️ Example with tags, browser, UI and autoreport
 
-```bash
+```
 npx playwright test tests/e2e --headed --project=chromium --grep "@ui" && npx playwright show-report
 ```
+
+---
+
+### 🔌 Playwright API Tests - Setup & Execution
+
+> Minimal guide to run API tests using Playwright (non-browser).
+
+##### 🚀 Run All API Tests
+
+```
+npm run test:api
+```
+
+This will run all `.spec.ts` files under `tests/api`, generate an HTML report, and open it automatically.
+
+##### 🧪 Run a Specific Test File
+
+```
+npx playwright test tests/api/myTest.spec.ts
+```
+
+##### 🧪 Run with UI
+
+```
+npx playwright test tests/api --ui
+```
+
+##### 📊 API Test Report Location
+
+After running:
+
+- Report opens automatically
+- Located at: `playwright-report/index.html`
+
+##### 🧠 Notes
+
+- API tests are tagged by project name `"API"` in the config.
+- No browser context is loaded unless manually specified.

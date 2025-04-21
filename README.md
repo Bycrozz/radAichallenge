@@ -1,3 +1,17 @@
+### Test Documentation and Bug Reporting
+
+The `Documents` folder contains comprehensive documentation for all testing layers in the project:
+
+- **Unit Tests Documentation.xlsx**  
+  Contains detailed descriptions of all unit test cases.
+
+- **API Tests Documentation.docx**  
+  Includes full documentation of all Playwright API test cases, along with identified bugs and improvement suggestions for the API.
+
+- **E2E Test Cases – Food Truck Search UI.docx**  
+  Describes the Playwright end-to-end test scenarios for the frontend, including functionality coverage and usage context.
+
+
 ### ⚠️ Important
 - Always use powershell as admin
 - If at any point of the process you get an error message containing

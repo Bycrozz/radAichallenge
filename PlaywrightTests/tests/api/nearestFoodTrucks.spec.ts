@@ -36,6 +36,24 @@ test.describe('GET /nearestFoodTrucks', () => {
     expect(json).toEqual([]);
   });
 
+  test.describe('GET /nearestFoodTrucks - Validation Errors', () => {
+    test('should return 400 with validation errors for invalid latitude and longitude', async ({ request }) => {
+      const res = await request.get(`${base}/nearestFoodTrucks?latitude=AAAA&longitude=-AAAA&status=APPROVED`);
+  
+      expect(res.status()).toBe(400);
+  
+      const json = await res.json();
+      expect(json).toMatchObject({
+        title: 'One or more validation errors occurred.',
+        status: 400,
+        errors: {
+          latitude: ['The value \'AAAA\' is not valid.'],
+          longitude: ['The value \'-AAAA\' is not valid.']
+        }
+      });
+    });
+  });
+
   test('should return 200 and an empty array for far west coordinates (Pacific Ocean)', async ({ request }) => {
     const res = await request.get(`${base}/nearestFoodTrucks?latitude=0&longitude=-150`);
     expect(res.status()).toBe(200);
